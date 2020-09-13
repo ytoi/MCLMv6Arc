@@ -245,7 +245,10 @@ sub xtumlmc_mkdir($);
 sub xtumlmc_mkdir($)
 {
   my $path = shift;
-  mkdir( $path ) or die "ERROR:  Could not create directory $path.\n";
+#  mkdir( $path ) or die "ERROR:  Could not create directory $path.\n";
+  mkdir( $path ) or print "INFO:  Could not create directory $path.\n";
+  print "INFO:Created $path";
+
 }
 sub xtumlmc_rmdir($);
 sub xtumlmc_rmdir($)
@@ -1413,8 +1416,10 @@ if ( 0 == scalar(@sqls) ) {
 my $tempUUIDfile = "$build_directory/model_temp_uuid_${serial}";
 my $modelBeingTranslated = "_system.sql";
 my $numSQLs = scalar(@sqls);
+
+if ( ! -f "$build_directory/$modelBeingTranslated" ) {
 if ( 1 != $numSQLs ) {
-  die "Expected 1 model file, and there are $numSQLs";
+  die "Expected 1 model file, and there are $numSQLs $sqls[0] $sqls[1]";
 } 
 
 foreach my $sql ( @sqls ) {
@@ -1428,12 +1433,12 @@ foreach my $sql ( @sqls ) {
 
     # Remove the temporary UUID file
     xtumlmc_rm( $tempUUIDfile );
-
   } else {
     die "SQL file $sqlfile does not seem to exist. Exiting...\n";
   }
 }
 
+}
 #---------------------------------------------------------------------------
 # Create the directory structure for the application domains.
 #---------------------------------------------------------------------------
@@ -1638,6 +1643,7 @@ foreach $f (@link_sys) {
   xtumlmc_copy( "../$f", "bin/" );
 }
 
+
 #---------------------------------------------------------------------------
 # Gather the source all together.
 #---------------------------------------------------------------------------
@@ -1662,6 +1668,12 @@ if ( -d $output_src ) {
       xtumlmc_copy_different( "_ch/$f", "$output_src/$f" );
     }
   }
+  #-- MCLM Start
+  $f = "_ch/app.cfg.tmp";
+  if ( -f  $f ) {
+      xtumlmc_copy( $f, "$output_src/../");
+  }
+#-- MCLM End
 }
 
 if ( 1 == $do_compile ) {

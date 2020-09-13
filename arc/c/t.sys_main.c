@@ -30,6 +30,11 @@ ${system_class_array.class_count}
     }
   }
 .end if
+.//-- MLCM Start
+.if ( te_thread.flavor == "EV3HRP" )
+  EV3B_Initialize();
+.end if
+.//-- MCLM End
 }
 
 /*
@@ -57,7 +62,14 @@ ${te_persist.factory_init}();
 .if ( "C" == te_target.language )
   /* Initialize TIM.  To change this, copy TIM_bridge.c to the gen folder.  */
   #if ${te_tim.max_timers} > 0
+.//-- MCLM Start
+.if ( te_thread.flavor == "EV3HRP" )
+  /* EV3 Timer is called by cyclic handler */
+  /* TIM_init(); */
+.else
   TIM_init();
+.end if
+.//-- MCLM End
   #endif
 .end if
   ApplicationLevelInitialization();

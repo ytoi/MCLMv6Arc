@@ -203,6 +203,14 @@ ${te_eq.scope}${te_eq.new}( const void * const destination,
   SetEventDestObjectNumber( event, event_info->destination_object_number );
   SetOoaEventNumber( event, event_info->event_number );
   SetOoaEventFlags( event, event_info->event_flags );
+  .// MLCM Extension Start
+  if ( destination ) {
+    /* if destination is not null, that means this is not creation event */
+    SetOoaEventFlags( event,(~ESCHER_IS_CREATION_EVENT)&event_info->event_flags );
+  } else {
+    SetOoaEventFlags( event, event_info->event_flags );
+  }
+  .// MLCM Extension End
   .if ( event_prioritization_needed.result )
   SetOoaEventPriority( event, event_info->priority );
   .end if
@@ -652,7 +660,14 @@ static void ooa_loop( void )
   .if ( te_sys.MaxTimers > 0 )
     ${more_indent}/* To disable this timer tick, modify TIM_bridge.c in the gen folder.  */
     ${more_indent}#if ${te_tim.max_timers} > 0
+.//-- MCLM Start
+    .if ( "EV3HRP" == te_thread.flavor )
+    ${more_indent}/* EV3 Timer is called by cyclic handler */
+    ${more_indent}/* if ( 0 == event ) { TIM_tick(); } */
+    .else
     ${more_indent}if ( 0 == event ) { TIM_tick(); }
+    .end if
+.//-- MLCM End
     ${more_indent}#endif
   .end if
   .if ( te_sys.MaxInterleavedBridges > 0 )
