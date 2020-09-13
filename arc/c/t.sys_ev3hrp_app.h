@@ -5,7 +5,13 @@
 
 #include "ev3api.h"
 
+#ifndef STACK_SIZE
+#define STACK_SIZE      (4096)        /* Default Stack Size*/
+#endif /* STACK_SIZE */
+
+
 #ifndef TOPPERS_MACRO_ONLY
+
 
 extern void main_task(intptr_t exinf);
 .assign task_num = 1
