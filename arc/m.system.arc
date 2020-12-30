@@ -59,6 +59,9 @@
     .create object instance ev3_touch_ee of TM_PEEE
     .assign ev3_touch_ee.Key_Lett = "EV3TCH"
     .assign ev3_touch_ee.template = "t.EV3TCH_bridge.c"
+    .create object instance ev3_raw_ee of TM_PEEE
+    .assign ev3_raw_ee.Key_Lett = "EV3R"
+    .assign ev3_raw_ee.template = "t.EV3R_bridge.c"
     .print "----------EV3 ARC------------"
     .invoke MarkMainFunction("xtUMLMain")
     .invoke TagEnumeratorMap("*","EV3Button","","","button_t")
@@ -68,6 +71,7 @@
     .invoke TagEnumeratorMap("*","EV3LedColor","LED_","ev3api.h","ledcolor_t")
     .invoke TagEnumeratorMap("*","EV3Motor","DEV_MOTOR_","mclm_ev3.h","device_motor_t")
     .invoke TagEnumeratorMap("*","EV3Result","MCLM_RESULT_","mclm_ev3.h","mclm_result_t")
+    .invoke TagEnumeratorMap("*","EV3SensorType","","ev3api.h","int")
   .end if
 .//-- MCLM Extension End
   .else
@@ -93,7 +97,7 @@
     .create object instance tm_thread_element of TM_THREAD_ELEMENT
       .assign tm_thread_element.thread_no = task_number
   .end if
-  .assign tm_thread_element.priority = priority   
+  .assign tm_thread_element.priority = priority
   .//-- MCLM End
   .assign tm_thread.extra_initialization = tm_thread.extra_initialization + "  xtUML_task_priorities[ $t{task_number} ] = ${priority};\n"
 .end function
@@ -115,7 +119,7 @@
     .create object instance tm_thread_element of TM_THREAD_ELEMENT
       .assign tm_thread_element.thread_no = task_number
   .end if
-  .assign tm_thread_element.stack_size = stack_size 
+  .assign tm_thread_element.stack_size = stack_size
 .end function
 .//-- MCLM End
 .//============================================================================
@@ -222,7 +226,7 @@
   .assign tm_systag = r.result
   .assign tm_systag.UnitsToDynamicallyAllocate = units_to_allocate
   .if ( tm_systag.UnitsToDynamicallyAllocate < 1 )
-    .assign tm_systag.UnitsToDynamicallyAllocate = 1 
+    .assign tm_systag.UnitsToDynamicallyAllocate = 1
   .end if
 .end function
 .//
@@ -318,8 +322,8 @@
 .end function
 .//
 .//============================================================================
-.// Force all ports to be polymorphic (where a component implements the same 
-.// interface going in the same direction more than once). 
+.// Force all ports to be polymorphic (where a component implements the same
+.// interface going in the same direction more than once).
 .//============================================================================
 .function MarkAllPortsPolymorphic
   .invoke r = TM_SYSTAG_select()
@@ -710,7 +714,7 @@
 .// port "PORT_A","PORT_B","PORT_C","PORT_D"
 .// motor_type "L" "M" "U"
 .// invert FALE:TRUE
-.// 
+.//
 .//============================================================================
 .function TagMotorConfig
   .param string position
